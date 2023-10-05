@@ -1,25 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
+import axios from "axios";
+import img from './images/motivation.gif'
 
-function App() {
+const App = () => {
+  const [advice, setAdvice] = useState();
+  const [loading, setLoading] = useState(false);
+
+  const fetchAdvice = () => {
+    setLoading(true); // Show loader
+    axios
+      .get("https://api.adviceslip.com/advice")
+      .then((data) => {
+        setTimeout(() => {
+          setAdvice(data.data.slip.advice);
+          setLoading(false); // Hide loader after 5 seconds
+        }, 2000);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false); // Hide loader on error
+      });
+  };
+
+  const handleButtonClick = (e) => {
+e.preventDefault()
+    fetchAdvice();
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <React.Fragment className='app'>
+      <div className="card">
+      <img src={img} alt="img" className="img1"/>
+        {loading ? (
+          <div className="loader"></div>
+        ) : advice ? (
+          <div className="heading">{advice}</div>
+        ) : null}
+        <button className="button-75" role="button" onClick={handleButtonClick}>
+        <span class="text">Give me Advice</span>
+        </button>
+      </div>
+    </React.Fragment>
   );
-}
+};
 
 export default App;
